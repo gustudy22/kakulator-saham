@@ -2,7 +2,7 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.
     <title>Kalkulator Harga Wajar Saham (Graham)</title>
     <style>
         body {
@@ -56,7 +56,249 @@
             background-color: #e9ecef;
             border-radius: 5px;
             display: none;
-        }
+        }<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kalkulator Saham Lengkap</title>
+  <style>
+    :root {
+      --bg-color: #121212;
+      --card-bg: #1e1e1e;
+      --text-color: #ffffff;
+      --input-bg: #2d2d2d;
+      --border-color: #444;
+      --primary: #007bff;
+      --success: #28a745;
+      --danger: #dc3545;
+    }
+
+    body.light-mode {
+      --bg-color: #f4f6f9;
+      --card-bg: #ffffff;
+      --text-color: #212529;
+      --input-bg: #ffffff;
+      --border-color: #ced4da;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 550px;
+      margin: 20px auto;
+      padding: 15px;
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      transition: background-color 0.3s, color 0.3s;
+    }
+
+    .container {
+      background: var(--card-bg);
+      padding: 25px;
+      border-radius: 12px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    }
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    h2 {
+      margin: 0;
+      font-size: 1.3rem;
+    }
+
+    .theme-toggle {
+      background: none;
+      border: 1px solid var(--border-color);
+      color: var(--text-color);
+      padding: 5px 12px;
+      border-radius: 20px;
+      cursor: pointer;
+      font-size: 0.85rem;
+    }
+
+    label {
+      display: block;
+      margin-top: 12px;
+      font-size: 0.9rem;
+      font-weight: bold;
+    }
+
+    input {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      box-sizing: border-box;
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      background-color: var(--input-bg);
+      color: var(--text-color);
+      font-size: 1rem;
+    }
+
+    .btn-group {
+      display: flex;
+      gap: 10px;
+      margin-top: 20px;
+    }
+
+    button.action-btn {
+      flex: 1;
+      padding: 12px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: bold;
+      font-size: 1rem;
+    }
+
+    .btn-calc {
+      background-color: var(--primary);
+      color: white;
+    }
+
+    .btn-reset {
+      background-color: #6c757d;
+      color: white;
+    }
+
+    #result {
+      margin-top: 25px;
+      padding: 15px;
+      border-radius: 8px;
+      background: var(--input-bg);
+      border: 1px solid var(--border-color);
+      display: none;
+    }
+
+    .res-item {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 8px;
+      font-size: 0.95rem;
+    }
+
+    .badge {
+      display: block;
+      text-align: center;
+      padding: 8px;
+      border-radius: 6px;
+      font-weight: bold;
+      margin-top: 12px;
+    }
+
+    .undervalued { background-color: var(--success); color: white; }
+    .overvalued { background-color: var(--danger); color: white; }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <div class="header">
+      <h2>Kalkulator Saham Lengkap</h2>
+      <button class="theme-toggle" onclick="toggleTheme()" id="themeBtn">☀️ Light Mode</button>
+    </div>
+
+    <label for="eps">EPS (Laba Bersih per Saham):</label>
+    <input type="number" id="eps" placeholder="Contoh: 150">
+
+    <label for="bvps">BVPS (Nilai Buku per Saham):</label>
+    <input type="number" id="bvps" placeholder="Contoh: 800">
+
+    <label for="price">Harga Saham Saat Ini:</label>
+    <input type="number" id="price" placeholder="Contoh: 1200">
+
+    <label for="dps">DPS (Dividen per Saham - Opsional):</label>
+    <input type="number" id="dps" placeholder="Contoh: 50">
+
+    <div class="btn-group">
+      <button class="action-btn btn-calc" onclick="calculate()">Hitung Analisis</button>
+      <button class="action-btn btn-reset" onclick="resetForm()">Reset</button>
+    </div>
+
+    <div id="result">
+      <div class="res-item"><span>Harga Wajar (Graham):</span> <strong id="resGraham">-</strong></div>
+      <div class="res-item"><span>Margin of Safety (MOS):</span> <strong id="resMOS">-</strong></div>
+      <div class="res-item"><span>PER (Price to Earnings):</span> <strong id="resPER">-</strong></div>
+      <div class="res-item"><span>PBV (Price to Book Value):</span> <strong id="resPBV">-</strong></div>
+      <div class="res-item"><span>Dividend Yield:</span> <strong id="resYield">-</strong></div>
+      
+      <div id="statusBadge" class="badge"></div>
+    </div>
+  </div>
+
+  <script>
+    function formatRupiah(val) {
+      return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 }).format(val);
+    }
+
+    function toggleTheme() {
+      document.body.classList.toggle('light-mode');
+      const btn = document.getElementById('themeBtn');
+      if (document.body.classList.contains('light-mode')) {
+        btn.innerText = '🌙 Dark Mode';
+      } else {
+        btn.innerText = '☀️ Light Mode';
+      }
+    }
+
+    function calculate() {
+      const eps = parseFloat(document.getElementById('eps').value);
+      const bvps = parseFloat(document.getElementById('bvps').value);
+      const price = parseFloat(document.getElementById('price').value);
+      const dps = parseFloat(document.getElementById('dps').value) || 0;
+
+      if (!eps || !bvps || !price) {
+        alert("Mohon isi EPS, BVPS, dan Harga Saham terlebih dahulu!");
+        return;
+      }
+
+      // Hitung Graham Number
+      const graham = Math.sqrt(22.5 * eps * bvps);
+      
+      // Hitung Margin of Safety (MOS)
+      const mos = ((graham - price) / graham) * 100;
+
+      // Hitung PER & PBV
+      const per = price / eps;
+      const pbv = price / bvps;
+
+      // Hitung Dividend Yield
+      const yieldVal = (dps / price) * 100;
+
+      // Tampilkan Hasil
+      document.getElementById('resGraham').innerText = formatRupiah(graham);
+      document.getElementById('resMOS').innerText = mos.toFixed(2) + '%';
+      document.getElementById('resPER').innerText = per.toFixed(2) + 'x';
+      document.getElementById('resPBV').innerText = pbv.toFixed(2) + 'x';
+      document.getElementById('resYield').innerText = yieldVal > 0 ? yieldVal.toFixed(2) + '%' : '-';
+
+      const badge = document.getElementById('statusBadge');
+      if (price < graham) {
+        badge.innerText = 'UNDERVALUED (Harga Diskon / Murah)';
+        badge.className = 'badge undervalued';
+      } else {
+        badge.innerText = 'OVERVALUED (Harga Mahal)';
+        badge.className = 'badge overvalued';
+      }
+
+      document.getElementById('result').style.display = 'block';
+    }
+
+    function resetForm() {
+      document.getElementById('eps').value = '';
+      document.getElementById('bvps').value = '';
+      document.getElementById('price').value = '';
+      document.getElementById('dps').value = '';
+      document.getElementById('result').style.display = 'none';
+    }
+  </script>
+</body>
+</html>
     </style>
 </head>
 <body>

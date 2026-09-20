@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kalkulator Harga Wajar Saham (Graham)</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 500px;
+            margin: 40px auto;
+            padding: 20px;
+            background-color: #f4f6f9;
+        }
+        .container {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        h2 {
+            text-align: center;
+            color: #333;
+        }
+        .input-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input {
+            width: 100%;
+            padding: 10px;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #e9ecef;
+            border-radius: 5px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Kalkulator Harga Wajar (Graham Number)</h2>
+    
+    <div class="input-group">
+        <label for="eps">EPS (Laba bersih per saham):</label>
+        <input type="number" id="eps" placeholder="Contoh: 150">
+    </div>
+    
+    <div class="input-group">
+        <label for="bvps">BVPS (Nilai buku per saham):</label>
+        <input type="number" id="bvps" placeholder="Contoh: 800">
+    </div>
+
+    <div class="input-group">
+        <label for="hargaSekarang">Harga Saham Saat Ini:</label>
+        <input type="number" id="hargaSekarang" placeholder="Contoh: 1200">
+    </div>
+
+    <button onclick="hitungGraham()">Hitung Harga Wajar</button>
+
+    <div class="result" id="hasil">
+        <p><strong>Harga Wajar (Graham Number):</strong> Rp <span id="grahamNumber">0</span></p>
+        <p><strong>Status:</strong> <span id="statusSaham">-</span></p>
+    </div>
+</div>
+
+<script>
+function hitungGraham() {
+    let eps = parseFloat(document.getElementById('eps').value);
+    let bvps = parseFloat(document.getElementById('bvps').value);
+    let hargaSekarang = parseFloat(document.getElementById('hargaSekarang').value);
+
+    if (isNaN(eps) || isNaN(bvps) || isNaN(hargaSekarang) || eps <= 0 || bvps <= 0) {
+        alert("Masukkan nilai EPS, BVPS, dan Harga Saham yang valid!");
+        return;
+    }
+
+    // Rumus Benjamin Graham: Sqrt(22.5 * EPS * BVPS)
+    let grahamVal = Math.sqrt(22.5 * eps * bvps);
+    
+    document.getElementById('grahamNumber').innerText = Math.round(grahamVal).toLocaleString('id-ID');
+
+    let statusElement = document.getElementById('statusSaham');
+    if (hargaSekarang < grahamVal) {
+        statusElement.innerText = "Undervalued (Murah / Layak Cek)";
+        statusElement.style.color = "green";
+    } else {
+        statusElement.innerText = "Overvalued (Mahal)";
+        statusElement.style.color = "red";
+    }
+
+    document.getElementById('hasil').style.display = 'block';
+}
+</script>
+
+</body>
+</html>
